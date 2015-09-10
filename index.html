@@ -14,8 +14,24 @@
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+          var $tweet = $('<div><img><ul><li></li><li></li></ul></div>');
+          $tweet.find('ul').css('list-style-type', 'none');
+
+          // add unknown twitter photo to users
+          $tweet.find('img').attr('src', 'nophoto.png');
+          $tweet.find('img').attr('height', '65');
+          $tweet.find('img').attr('width', '65');
+          $tweet.find('img').css('float', 'left');
+          $tweet.find('img').css('margin', '0 5px 20px 5px');
+          $tweet.css('clear', 'left');
+
+          // put username (bold) on top of tweet message with arial font-family
+          $tweet.find('li').first().text('@' + tweet.user);
+          $tweet.find('li').first().css('font-weight', 'bold');
+          $tweet.find('li').first().css('font-family', 'Arial');
+          $tweet.find('li').last().text(tweet.message);
+          $tweet.find('li').last().css('font-family', 'Arial');
+
           $tweet.appendTo($body);
           index -= 1;
         }
