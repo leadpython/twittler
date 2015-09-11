@@ -14,30 +14,77 @@
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div><img><ul><li></li><li></li></ul></div>');
-          $tweet.find('ul').css('list-style-type', 'none');
-
-          // add unknown twitter photo to users
-          $tweet.find('img').attr('src', 'nophoto.png');
-          $tweet.find('img').attr('height', '65');
-          $tweet.find('img').attr('width', '65');
-          $tweet.find('img').css('float', 'left');
-          $tweet.find('img').css('margin', '0 5px 20px 5px');
-          $tweet.css('clear', 'left');
-
-          // put username (bold) on top of tweet message with arial font-family
-          $tweet.find('li').first().text('@' + tweet.user);
-          $tweet.find('li').first().css('font-weight', 'bold');
-          $tweet.find('li').first().css('font-family', 'Arial');
-          $tweet.find('li').last().text(tweet.message);
-          $tweet.find('li').last().css('font-family', 'Arial');
-
-          $tweet.appendTo($body);
+          showTweets(tweet).appendTo($body);
           index -= 1;
         }
 
+        setInterval(function() {
+          $body.empty();
+          var index = streams.home.length - 1;
+          while(index >= 0){
+            var tweet = streams.home[index];
+            showTweets(tweet).appendTo($body);
+            index -= 1;
+          }
+        }, 100);
+
+        // show a user's timeline when username is clicked
+        $body.find('a').on('click', function() {
+          $body.empty();
+          var className = $(this).closest('li').attr('class');
+          var index = streams.users[className].length - 1;
+
+          while(index >= 0){
+            var tweet = streams.users[className][index];
+            showTweets(tweet).appendTo($body);
+            index -= 1;
+          }
+        });
       });
+
+      function showTweets(tweet) {
+        var $tweet = $('<div><img><ul><li><a></a><p></p></li><li></li></ul></div>');
+        $tweet.find('ul').css('list-style-type', 'none');
+
+        // add twitter photo to users
+        $tweet.find('img').attr('src', (tweet.user+'.jpg'));
+        $tweet.find('img').attr('height', '65');
+        $tweet.find('img').attr('width', '55');
+        $tweet.find('img').css('float', 'left');
+        $tweet.find('img').css('margin', '0 5px 20px 5px');
+        $tweet.css('clear', 'left');
+
+        // put username (bold) on top of tweet message with arial font-family
+        $tweet.find('li').first().find('a').text('@' + tweet.user);
+        $tweet.find('li').first().find('a').css('font-weight', 'bold');
+        $tweet.find('li').first().find('a').css('font-family', 'Arial');
+        $tweet.find('li').first().find('a').attr('href', '#');
+        $tweet.find('li').last().text(tweet.message);
+        $tweet.find('li').last().css('font-family', 'Arial');
+
+        // add timestamp
+        $tweet.find('p').text(tweet.created_at);
+        $tweet.find('p').css('float', 'right');
+        $tweet.find('p').css('font-family', 'Arial');
+        $tweet.find('p').css('font-size', '50%');
+
+        // add class attribute with username for the tweet
+        if ($tweet.hasClass(tweet.user) === false) {
+          $tweet.addClass(tweet.user);
+        }
+
+        return $tweet;  
+      }
 
     </script>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
