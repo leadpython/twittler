@@ -5,77 +5,84 @@
     <script src="data_generator.js"></script>
   </head>
   <body>
+    <div class="profileDiv" style="margin-left:auto; margin-right:auto; width:700px">
+      <img src="myPhoto.jpg" height="100" width="85" style="float: left">
+      <p id="profileUserName" style="font-family:Arial; font-weight:bold">@jeffcampecino</p>
+      <input type="text" name="tweetUpdate" value="What's on your mind?" style="margin-left:5px; width:500px; height:20px">
+      <button id="tweetMSG" style="margin:5px 0 0 5px">TWEET MESSAGE</button>
+      <button id="showTweets" style="margin:5px 0 0 5px">SHOW ALL TWEETS</button>
+    </div>
+    <div class="tweetSection" style="width:500px; margin-left:auto; margin-right:auto"></div>
     <script>
-
       $(document).ready(function(){
         var $body = $('body');
-        $body.html('');
 
+        // show all Tweets initially when index.html is first run
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          showTweets(tweet).appendTo($body);
+          getTweets(tweet).prependTo('.tweetSection');
           index -= 1;
         }
 
-        setInterval(function() {
-          $body.empty();
+        $('#showTweets').on('click', function() {
+          $body.find('.tweetSection').empty();
           var index = streams.home.length - 1;
           while(index >= 0){
             var tweet = streams.home[index];
-            showTweets(tweet).appendTo($body);
+            getTweets(tweet).prependTo('.tweetSection');
             index -= 1;
           }
-        }, 100);
+        });
 
-        // show a user's timeline when username is clicked
-        $body.find('a').on('click', function() {
-          $body.empty();
-          var className = $(this).closest('li').attr('class');
+        // if username is clicked, hide all tweets and show that username's timeline of tweets
+        $('.showUserTimeline').on('click', function() {
+          $body.find('.tweetSection').empty();
+          var className = $(this).closest('div').attr('class').split(' ')[1];
+          $body.find('.'+className).show();
+
+          // show all Tweets initially when index.html is first run
           var index = streams.users[className].length - 1;
-
           while(index >= 0){
             var tweet = streams.users[className][index];
-            showTweets(tweet).appendTo($body);
+            getTweets(tweet).appendTo('.tweetSection');
             index -= 1;
           }
         });
       });
 
-      function showTweets(tweet) {
+      // function to get tweets from data_generator.js
+      function getTweets(tweet) {
         var $tweet = $('<div><img><ul><li><a></a><p></p></li><li></li></ul></div>');
+        $tweet.css({'clear': 'left', 'width': '500px'});
         $tweet.find('ul').css('list-style-type', 'none');
 
         // add twitter photo to users
-        $tweet.find('img').attr('src', (tweet.user+'.jpg'));
-        $tweet.find('img').attr('height', '65');
-        $tweet.find('img').attr('width', '55');
-        $tweet.find('img').css('float', 'left');
-        $tweet.find('img').css('margin', '0 5px 20px 5px');
-        $tweet.css('clear', 'left');
+        $tweet.find('img').attr({'src': (tweet.user+'.jpg'), 'height': '65', 'width': '55'});
+        $tweet.find('img').css({'float': 'left', 'margin': '0 5px 20px 5px'});
 
         // put username (bold) on top of tweet message with arial font-family
         $tweet.find('li').first().find('a').text('@' + tweet.user);
-        $tweet.find('li').first().find('a').css('font-weight', 'bold');
-        $tweet.find('li').first().find('a').css('font-family', 'Arial');
+        $tweet.find('li').first().find('a').css({'font-weight': 'bold', 'font-family': 'Arial', 'color': 'black'});
         $tweet.find('li').first().find('a').attr('href', '#');
+        $tweet.find('li').first().find('a').addClass('showUserTimeline');
         $tweet.find('li').last().text(tweet.message);
-        $tweet.find('li').last().css('font-family', 'Arial');
+        $tweet.find('li').last().css({'font-family': 'Arial', 'font-size': '75%', 'margin-bottom': '50px'});
 
         // add timestamp
         $tweet.find('p').text(tweet.created_at);
-        $tweet.find('p').css('float', 'right');
-        $tweet.find('p').css('font-family', 'Arial');
-        $tweet.find('p').css('font-size', '50%');
+        $tweet.find('p').css({'float': 'right', 'font-family': 'Arial', 'font-size': '50%', 'margin': '5px 0 0 0'});
 
-        // add class attribute with username for the tweet
-        if ($tweet.hasClass(tweet.user) === false) {
-          $tweet.addClass(tweet.user);
-        }
+        // add class attributes
+        $tweet.addClass('tweet');
+        $tweet.addClass(tweet.user);
 
         return $tweet;  
       }
 
+      function timeStamp(date) {
+
+      }
     </script>
   </body>
 </html>
